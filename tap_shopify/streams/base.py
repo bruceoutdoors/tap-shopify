@@ -3,12 +3,12 @@ import functools
 import math
 import sys
 import socket
+import http
 import backoff
 import pyactiveresource
 import pyactiveresource.formats
 import simplejson
 import singer
-import http
 from singer import metrics, utils
 from tap_shopify.context import Context
 
