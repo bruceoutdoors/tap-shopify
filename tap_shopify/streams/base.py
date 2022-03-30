@@ -8,6 +8,7 @@ import pyactiveresource
 import pyactiveresource.formats
 import simplejson
 import singer
+import http
 from singer import metrics, utils
 from tap_shopify.context import Context
 
@@ -77,6 +78,10 @@ def is_timeout_error(error_raised):
     return True
 
 def shopify_error_handling(fnc):
+    @backoff.on_exception(backoff.expo, # IncompleteRead error raised
+                          http.client.IncompleteRead,
+                          max_tries=MAX_RETRIES,
+                          factor=2)
     @backoff.on_exception(backoff.expo, # timeout error raise by Shopify
                           (pyactiveresource.connection.Error, socket.timeout),
                           giveup=is_timeout_error,
